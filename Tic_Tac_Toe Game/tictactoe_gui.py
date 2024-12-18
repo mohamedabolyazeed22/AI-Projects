@@ -1,55 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 
-# Logic Class for Tic Tac Toe
-class TicTacToeLogic:
-    def __init__(self, ai_symbol, player_symbol):
-        self.board = [['_'] * 3 for _ in range(3)]
-        self.ai_symbol = ai_symbol
-        self.player_symbol = player_symbol
-
-    def is_moves_left(self):
-        # Check if there are moves left on the board
-        for row in self.board:
-            if '_' in row:
-                return True
-        return False
-
-    def evaluate(self):
-        # Check rows for victory
-        for row in self.board:
-            if row.count(self.ai_symbol) == 3:
-                return 10
-            elif row.count(self.player_symbol) == 3:
-                return -10
-        
-        # Check columns
-        for col in range(3):
-            if all(self.board[row][col] == self.ai_symbol for row in range(3)):
-                return 10
-            elif all(self.board[row][col] == self.player_symbol for row in range(3)):
-                return -10
-        
-        # Check diagonals
-        if all(self.board[i][i] == self.ai_symbol for i in range(3)) or \
-           all(self.board[i][2 - i] == self.ai_symbol for i in range(3)):
-            return 10
-        if all(self.board[i][i] == self.player_symbol for i in range(3)) or \
-           all(self.board[i][2 - i] == self.player_symbol for i in range(3)):
-            return -10
-
-        return 0  # No winner yet
-
-    def find_best_move(self):
-        # Simple logic: find the first empty spot
-        for i in range(3):
-            for j in range(3):
-                if self.board[i][j] == '_':
-                    return (i, j)
-        return (-1, -1)  # No moves left
-
-
-# UI Class for Tic Tac Toe
 class TicTacToeUI:
     def __init__(self, master):
         self.master = master
@@ -60,8 +11,6 @@ class TicTacToeUI:
         self.player_name = simpledialog.askstring("Player Name", "Enter your name:")
         self.opponent_name = "Opponent"
         self.player_symbol = simpledialog.askstring("Choose Symbol", "Choose your symbol (X or O):").upper()
-        while self.player_symbol not in ['X', 'O']:
-            self.player_symbol = simpledialog.askstring("Choose Symbol", "Invalid choice! Choose X or O:").upper()
         self.opponent_symbol = 'X' if self.player_symbol == 'O' else 'O'
 
         self.logic = TicTacToeLogic(self.opponent_symbol, self.player_symbol)
@@ -120,31 +69,35 @@ class TicTacToeUI:
         self.buttons[row][col].config(text=symbol, state=tk.DISABLED)
 
     def check_game_limit(self):
+        # Check if the score reaches 5 and display the final winner
         if self.player_score >= 5:
-            self.end_game(f"🎉 {self.player_name} is the Grand Winner! 🎉")
+            final_winner = f"🎉 {self.player_name} is the Grand Winner! 🎉"
         elif self.opponent_score >= 5:
-            self.end_game(f"🎉 {self.opponent_name} is the Grand Winner! 🎉")
+            final_winner = f"🎉 {self.opponent_name} is the Grand Winner! 🎉"
         else:
-            return False
-        return True
+            return False  # Continue playing
 
-    def end_game(self, message):
-        messagebox.showinfo("Game Over", message)
-        play_again = messagebox.askyesno("Play Again?", "Do you want to play a new game?")
+        # Show final winner and ask to play again
+        messagebox.showinfo("Game Over", final_winner)
+        play_again = messagebox.askyesno("Play Again?", "Do you want to start a new game?")
+        
         if play_again:
-            self.reset_game(True)
+            self.reset_game()  # Reset scores and board
         else:
-            self.master.quit()
+            self.master.quit()  # Quit application
+        return True
 
     def check_winner(self):
         result = self.logic.evaluate()
         if result == 10:
             self.opponent_score += 1
             self.show_result(f"{self.opponent_name} Wins!")
+            self.check_game_limit()  # Check if game limit reached
             return True
         elif result == -10:
             self.player_score += 1
             self.show_result(f"{self.player_name} Wins!")
+            self.check_game_limit()  # Check if game limit reached
             return True
         elif not self.logic.is_moves_left():
             self.show_result("It's a Draw!")
@@ -154,23 +107,17 @@ class TicTacToeUI:
     def show_result(self, message):
         messagebox.showinfo("Game Over", message)
         self.update_scores()
-        if not self.check_game_limit():
-            self.reset_board()
-
-    def update_scores(self):
-        self.player_label.config(text=f"{self.player_name}: {self.player_score}")
-        self.opponent_label.config(text=f"{self.opponent_name}: {self.opponent_score}")
-
+        self.reset_board 
+    
     def reset_board(self):
         for i in range(3):
             for j in range(3):
                 self.logic.board[i][j] = '_'
                 self.buttons[i][j].config(text='', state=tk.NORMAL)
 
-    def reset_game(self, full_reset=False):
-        if full_reset:
-            self.player_score = 0
-            self.opponent_score = 0
+    def reset_game(self):
+        self.player_score = 0
+        self.opponent_score = 0
         self.update_scores()
         self.reset_board()
 
