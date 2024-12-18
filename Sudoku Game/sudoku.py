@@ -1,59 +1,94 @@
-# gui.py
+def is_valid_move(grid, row, col, number):
+    """Checks if placing 'number' at (row, col) in 'grid' is valid.
 
-import tkinter as tk
-from tkinter import messagebox
-from sudoku import print_board, player_move, ai_move
+    Args:
+        grid: A 9x9 list of lists representing the Sudoku grid.
+        row: The row index of the cell to check.
+        col: The column index of the cell to check.
+        number: The number to check if it can be placed.
 
-def on_cell_click(row, col):
-    try:
-        num = int(grid[row][col].get())
-        if num < 1 or num > 9:
-            raise ValueError
-        if player_move(sudoku_board, row, col, num):
-            print_board(sudoku_board)
-        else:
-            messagebox.showerror("Invalid Move", "This move is not valid.")
-    except ValueError:
-        messagebox.showerror("Invalid Input", "Please enter a number between 1 and 9.")
+    Returns:
+        True if the move is valid, False otherwise.
+    """
 
-def ai_turn():
-    if ai_move(sudoku_board):
-        print_board(sudoku_board)
-    else:
-        messagebox.showinfo("AI Move", "AI has no valid moves left.")
+    # Check row
+    for x in range(9):
+        if grid[row][x] == number:
+            return False
 
-# Create the main window
-root = tk.Tk()
-root.title("Sudoku Game")
+    # Check column
+    for x in range(9):
+        if grid[x][col] == number:
+            return False
 
-# Create a 9x9 grid of Entry widgets
-grid = [[None for _ in range(9)] for _ in range(9)]
-for r in range(9):
-    for c in range(9):
-        entry = tk.Entry(root, width=3, font=('Arial', 18), justify='center')
-        entry.grid(row=r, column=c, padx=5, pady=5)
-        entry.bind("<Return>", lambda e, row=r, col=c: on_cell_click(row, col))
-        grid[r][c] = entry
+    # Check 3x3 subgrid
+    corner_row = row // 3 * 3
+    corner_col = col // 3 * 3
+    for x in range(3):
+        for y in range(3):
+            if grid[corner_row + x][corner_col + y] == number:
+                return False
 
-# Initialize the Sudoku board
-sudoku_board = [
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9]
-]
+    return True
 
-# Fill the grid with initial values
-print_board(sudoku_board)
+def solve(grid, row, col):
+    """
+    Solves a Sudoku puzzle using backtracking.
 
-# Create a button for AI move
-ai_button = tk.Button(root, text="AI Move", command=ai_turn)
-ai_button.grid(row=10, column=0, columnspan=9, pady=10)
+    Args:
+        grid: A 9x9 list of lists representing the Sudoku grid.
+        row: The current row index.
+        col: The current column index.
 
-# Start the GUI event loop
-root.mainloop()
+    Returns:
+        True if the puzzle is solved, False otherwise.
+    """
+
+    # Base case: If we have reached the end of the grid, the puzzle is solved
+    if col == 9:
+        if row == 8:
+            return True
+        row += 1
+        col = 0
+
+    # If the current cell already has a number, move to the next cell
+    if grid[row][col] > 0:
+        return solve(grid, row, col + 1)
+
+    # Try placing numbers from 1 to 9 in the current cell
+    for num in range(1, 10):
+        # Check if placing 'num' is valid
+        if is_valid_move(grid, row, col, num):
+            # Place 'num' in the grid
+            grid[row][col] = num
+
+            # Recursively solve the rest of the grid
+            if solve(grid, row, col + 1):
+                return True
+
+            # If placing 'num' doesn't lead to a solution, backtrack
+            grid[row][col] = 0
+
+    # If no number can be placed in the current cell, return False
+    return False
+
+grid = [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9]
+    ]
+
+if solve(grid, 0, 0):
+    for i in range(9):
+        for j in range(9):
+            print(grid[i][j], end=" ")
+        print()
+    print("Sudoku solved!")
+else:
+    print("No solution found.")
