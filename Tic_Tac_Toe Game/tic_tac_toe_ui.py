@@ -127,7 +127,7 @@ class TicTacToeUI:
         self.reset_board()
 
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = TicTacToeUI(root)
-    root.mainloop()
+
+root = tk.Tk()
+app = TicTacToeUI(root)
+root.mainloop()
