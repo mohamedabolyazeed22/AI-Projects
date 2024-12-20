@@ -38,7 +38,6 @@ class SudokuGUI:
         self.root.bind('<ButtonRelease-1>', self.handle_drop)
 
     def create_grid(self):
-        """Create the Sudoku grid."""
         self.cells = []
         self.grid_frame = tk.Frame(self.main_frame, bg='black', bd=2, relief='solid')
         self.grid_frame.pack(side='left', padx=(0, 20))
@@ -57,7 +56,6 @@ class SudokuGUI:
         self.update_display()
 
     def create_cell_frame(self, i, j):
-        """Create a frame for a single cell."""
         cell_frame = tk.Frame(
             self.grid_frame,
             width=self.cell_size,
@@ -77,7 +75,6 @@ class SudokuGUI:
         return cell_frame
 
     def create_cell_label(self, cell_frame):
-        """Create a label for a cell."""
         label = tk.Label(
             cell_frame,
             text='',
@@ -90,24 +87,15 @@ class SudokuGUI:
         return label
 
     def create_control_buttons(self):
-        """Create control buttons (Solve, AI Move, Clear, Reset)."""
         button_frame = tk.Frame(self.root, bg='black')
         button_frame.pack(pady=10)
 
-        # Solve button
         self.create_button(button_frame, "Solve", self.solve_puzzle)
-
-        # AI Move button
         self.create_button(button_frame, "AI Move", self.make_ai_move)
-
-        # Clear button
         self.create_button(button_frame, "Clear", self.clear_board)
-
-        # Reset button
         self.create_button(button_frame, "Reset", self.reset_last_value)
 
     def create_button(self, parent, text, command):
-        """Helper method to create a button."""
         btn = tk.Button(
             parent,
             text=text,
@@ -120,7 +108,6 @@ class SudokuGUI:
         btn.pack(side='left', padx=5)
 
     def reset_last_value(self):
-        """Remove the last value input without clearing all."""
         if self.selected_cell:
             row, col = self.selected_cell
             if self.initial_board[row][col] == 0 and self.board[row][col] != 0:
@@ -128,20 +115,17 @@ class SudokuGUI:
                 self.cells[row][col].configure(text='')
 
     def reset_game(self):
-        """Reset the game to the initial state."""
         self.board = [row[:] for row in self.initial_board]
         self.selected_cell = None
         self.update_display()
         self.clear_victory_message()
 
     def clear_victory_message(self):
-        """Clear the victory message if it exists."""
         for widget in self.root.winfo_children():
             if isinstance(widget, tk.Label) and widget.cget('text').startswith('You Won!'):
                 widget.destroy()
 
     def solve_puzzle(self):
-        """Solve the entire Sudoku puzzle."""
         if self.solve_sudoku():
             self.update_display()
             if self.check_victory():
@@ -150,7 +134,6 @@ class SudokuGUI:
             messagebox.showinfo("Error", "No solution exists for this puzzle!")
 
     def solve_sudoku(self, row=0, col=0):
-        """Recursive function to solve Sudoku."""
         if row == 9:
             return True
 
@@ -170,7 +153,6 @@ class SudokuGUI:
         return False
 
     def make_ai_move(self):
-        """Make a single smart move."""
         if not self.selected_cell:
             messagebox.showinfo("Info", "Please select a cell first!")
             return
@@ -193,7 +175,6 @@ class SudokuGUI:
             messagebox.showinfo("Info", "No valid moves available for this cell!")
 
     def clear_board(self):
-        """Clear all non-initial cells."""
         for i in range(9):
             for j in range(9):
                 if self.initial_board[i][j] == 0:
@@ -203,7 +184,6 @@ class SudokuGUI:
         self.selected_cell = None
 
     def create_numpad(self):
-        """Create the number pad on the right."""
         numpad_frame = tk.Frame(self.main_frame, bg='black')
         numpad_frame.pack(side='right')
 
@@ -242,7 +222,6 @@ class SudokuGUI:
         self.drag_label.place(x=event.x_root, y=event.y_root, anchor="center")
 
     def drag(self, event):
-        """Update position of dragged number."""
         if hasattr(self, 'drag_label') and self.dragged_number:
             self.drag_label.place(x=event.x_root, y=event.y_root, anchor="center")
 
@@ -257,7 +236,6 @@ class SudokuGUI:
                         return
 
     def handle_drop(self, event):
-        """Handle dropping a number into a cell."""
         if self.dragged_number and self.selected_cell:
             row, col = self.selected_cell
             if self.initial_board[row][col] == 0:
@@ -278,7 +256,6 @@ class SudokuGUI:
         self.dragged_number = None
 
     def cell_clicked(self, row, col):
-        """Handle cell selection."""
         if self.initial_board[row][col] == 0:
             if self.selected_cell:
                 prev_row, prev_col = self.selected_cell
@@ -288,7 +265,6 @@ class SudokuGUI:
             self.cells[row][col].master.configure(bg='#333')
 
     def is_valid_move(self, row, col, num):
-        """Check if a move is valid."""
         if any(self.board[row][j] == num for j in range(9) if j != col):
             return False
         if any(self.board[i][col] == num for i in range(9) if i != row):
@@ -301,7 +277,6 @@ class SudokuGUI:
         return True
 
     def update_display(self):
-        """Update the display with current board state."""
         for i in range(9):
             for j in range(9):
                 value = self.board[i][j]
@@ -311,11 +286,9 @@ class SudokuGUI:
                     self.cells[i][j].configure(text='')
 
     def check_victory(self):
-        """Check if the puzzle is solved."""
         return all(self.board[i][j] != 0 for i in range(9) for j in range(9))
 
     def show_victory(self):
-        """Show victory message."""
         victory_label = tk.Label(
             self.root,
             text="You Won!\n\nPress Space to restart!",
@@ -327,7 +300,6 @@ class SudokuGUI:
         victory_label.pack()
 
     def new_game(self, event=None):
-        """Start a new game."""
         self.reset_game()
         self.clear_victory_message()
 
