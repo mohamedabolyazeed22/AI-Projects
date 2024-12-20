@@ -76,16 +76,16 @@ class TicTacToeUI:
         elif self.opponent_score >= 5:
             final_winner = f"🎉 {self.opponent_name} is the Grand Winner! 🎉"
         else:
-            return False  # Continue playing
+            return False  
 
         # Show final winner and ask to play again
         messagebox.showinfo("Game Over", final_winner)
         play_again = messagebox.askyesno("Play Again?", "Do you want to start a new game?")
         
         if play_again:
-            self.reset_game()  # Reset scores and board
+            self.reset_game()  
         else:
-            self.master.quit()  # Quit application
+            self.master.quit()  
         return True
 
     def check_winner(self):
@@ -93,12 +93,12 @@ class TicTacToeUI:
         if result == 10:
             self.opponent_score += 1
             self.show_result(f"{self.opponent_name} Wins!")
-            self.check_game_limit()  # Check if game limit reached
+            self.check_game_limit()  
             return True
         elif result == -10:
             self.player_score += 1
             self.show_result(f"{self.player_name} Wins!")
-            self.check_game_limit()  # Check if game limit reached
+            self.check_game_limit()  
             return True
         elif not self.logic.is_moves_left():
             self.show_result("It's a Draw!")

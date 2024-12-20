@@ -8,13 +8,11 @@ class SudokuGUI:
         self.root.title("Sudoku")
         self.root.configure(bg='black')
 
-        # Configure style
         self.font = ('Arial', 24)
         self.cell_size = 60
         self.selected_cell = None
         self.dragged_number = None
 
-        # Initial Sudoku board
         self.board = [
             [3, 0, 2, 1, 5, 0, 9, 0, 0],
             [0, 0, 0, 0, 0, 0, 7, 8, 0],
@@ -28,7 +26,6 @@ class SudokuGUI:
         ]
         self.initial_board = [row[:] for row in self.board]
 
-        # Create main frame
         self.main_frame = tk.Frame(root, bg='black')
         self.main_frame.pack(padx=20, pady=20)
 
@@ -36,7 +33,6 @@ class SudokuGUI:
         self.create_numpad()
         self.create_control_buttons()
 
-        # Bind keyboard and mouse events
         root.bind('<space>', self.new_game)
         self.root.bind('<B1-Motion>', self. drag)
         self.root.bind('<ButtonRelease-1>', self.handle_drop)
