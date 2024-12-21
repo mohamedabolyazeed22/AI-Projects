@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog
 from tic_tac_toe_logic import TicTacToeLogic
 
+# Start gui Hazem
 class TicTacToeUI:
     def __init__(self, master):
         self.master = master
@@ -10,7 +11,7 @@ class TicTacToeUI:
 
         # Ask player for names and symbols
         self.player_name = simpledialog.askstring("Player Name", "Enter your name:")
-        self.opponent_name = "Opponent"
+        self.opponent_name = "AI Player"
         self.player_symbol = simpledialog.askstring("Choose Symbol", "Choose your symbol (X or O):").upper()
         self.opponent_symbol = 'X' if self.player_symbol == 'O' else 'O'
 
@@ -69,7 +70,11 @@ class TicTacToeUI:
         self.logic.board[row][col] = symbol
         self.buttons[row][col].config(text=symbol, state=tk.DISABLED)
 
-    def check_game_limit(self):
+        # End gui Hazem
+
+        # Start gui Abolyazeed
+
+    def check_game_limit(self): 
         # Check if the score reaches 5 and display the final winner
         if self.player_score >= 5:
             final_winner = f"🎉 {self.player_name} is the Grand Winner! 🎉"
