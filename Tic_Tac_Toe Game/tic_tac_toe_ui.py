@@ -2,20 +2,21 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog
 from tic_tac_toe_logic import TicTacToeLogic
 
-# Start gui Hazem
 class TicTacToeUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Tic Tac Toe")
         self.master.geometry("400x500")
 
+        # Ask player for names and symbols
         self.player_name = simpledialog.askstring("Player Name", "Enter your name:")
-        self.opponent_name = "AI Player"
+        self.opponent_name = "Opponent"
         self.player_symbol = simpledialog.askstring("Choose Symbol", "Choose your symbol (X or O):").upper()
         self.opponent_symbol = 'X' if self.player_symbol == 'O' else 'O'
 
         self.logic = TicTacToeLogic(self.opponent_symbol, self.player_symbol)
 
+        # Scores
         self.player_score = 0
         self.opponent_score = 0
 
@@ -48,7 +49,7 @@ class TicTacToeUI:
             self.buttons.append(row)
 
         self.reset_button = tk.Button(self.master, text="Reset Game", command=self.reset_game, font=("Arial", 12),
-                                      bg="#F39C12", fg="white")
+                bg="#F39C12", fg="white")
         self.reset_button.pack(pady=20)
 
     def human_turn(self, row, col):
@@ -68,11 +69,8 @@ class TicTacToeUI:
         self.logic.board[row][col] = symbol
         self.buttons[row][col].config(text=symbol, state=tk.DISABLED)
 
-        # End gui Hazem
-
-        # Start gui Abolyazeed
-
-    def check_game_limit(self): 
+    def check_game_limit(self):
+        # Check if the score reaches 5 and display the final winner
         if self.player_score >= 5:
             final_winner = f"🎉 {self.player_name} is the Grand Winner! 🎉"
         elif self.opponent_score >= 5:
@@ -80,6 +78,7 @@ class TicTacToeUI:
         else:
             return False  
 
+        # Show final winner and ask to play again
         messagebox.showinfo("Game Over", final_winner)
         play_again = messagebox.askyesno("Play Again?", "Do you want to start a new game?")
         
@@ -126,6 +125,8 @@ class TicTacToeUI:
         self.opponent_score = 0
         self.update_scores()
         self.reset_board()
+
+
 
 root = tk.Tk()
 app = TicTacToeUI(root)
