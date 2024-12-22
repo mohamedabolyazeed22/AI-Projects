@@ -1,5 +1,4 @@
 class TicTacToeLogic:
-    # Start gui Hazem
     def __init__(self, player_symbol, opponent_symbol):
         self.board = [['_' for _ in range(3)] for _ in range(3)]
         self.player = player_symbol
@@ -18,10 +17,6 @@ class TicTacToeLogic:
                 return 10 if line[0] == self.player else -10
         return 0
 
-        # End gui Hazem
-
-        # Start gui Abolyazeed
-        
     def minimax(self, depth, is_maximizing_player):
         score = self.evaluate()
 
